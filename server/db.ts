@@ -1,6 +1,22 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { 
+  InsertUser, 
+  users, 
+  renterProfiles,
+  landlordProfiles,
+  renterSubscriptions,
+  rentalListings,
+  applications,
+  paymentTransactions,
+  documents,
+  InsertRenterProfile,
+  InsertLandlordProfile,
+  InsertRentalListing,
+  InsertApplication,
+  InsertPaymentTransaction,
+  InsertDocument,
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -58,6 +74,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     } else if (user.openId === ENV.ownerOpenId) {
       values.role = 'admin';
       updateSet.role = 'admin';
+    } else {
+      values.role = 'renter';
+      updateSet.role = 'renter';
     }
 
     if (!values.lastSignedIn) {
@@ -89,4 +108,166 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Renter Profile Queries
+export async function getRenterProfile(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(renterProfiles).where(eq(renterProfiles.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createOrUpdateRenterProfile(userId: number, data: Partial<InsertRenterProfile>) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const existing = await getRenterProfile(userId);
+  if (existing) {
+    await db.update(renterProfiles).set(data).where(eq(renterProfiles.userId, userId));
+    return getRenterProfile(userId);
+  } else {
+    await db.insert(renterProfiles).values({ userId, ...data } as InsertRenterProfile);
+    return getRenterProfile(userId);
+  }
+}
+
+// Landlord Profile Queries
+export async function getLandlordProfile(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(landlordProfiles).where(eq(landlordProfiles.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createOrUpdateLandlordProfile(userId: number, data: Partial<InsertLandlordProfile>) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const existing = await getLandlordProfile(userId);
+  if (existing) {
+    await db.update(landlordProfiles).set(data).where(eq(landlordProfiles.userId, userId));
+    return getLandlordProfile(userId);
+  } else {
+    await db.insert(landlordProfiles).values({ userId, ...data } as InsertLandlordProfile);
+    return getLandlordProfile(userId);
+  }
+}
+
+// Subscription Queries
+export async function getRenterSubscription(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(renterSubscriptions).where(eq(renterSubscriptions.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createOrUpdateSubscription(userId: number, data: Partial<InsertRenterProfile>) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const existing = await getRenterSubscription(userId);
+  if (existing) {
+    await db.update(renterSubscriptions).set(data).where(eq(renterSubscriptions.userId, userId));
+    return getRenterSubscription(userId);
+  } else {
+    await db.insert(renterSubscriptions).values({ userId, ...data } as any);
+    return getRenterSubscription(userId);
+  }
+}
+
+// Listing Queries
+export async function getListingById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(rentalListings).where(eq(rentalListings.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getActiveListings() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(rentalListings).where(eq(rentalListings.status, 'active'));
+}
+
+export async function getLandlordListings(landlordId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(rentalListings).where(eq(rentalListings.landlordId, landlordId));
+}
+
+export async function createListing(data: InsertRentalListing) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.insert(rentalListings).values(data);
+  const result = await db.select().from(rentalListings).orderBy(rentalListings.id).limit(1);
+  return result.length > 0 ? result[result.length - 1] : undefined;
+}
+
+// Application Queries
+export async function getApplicationById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(applications).where(eq(applications.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getRenterApplications(renterId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(applications).where(eq(applications.renterId, renterId));
+}
+
+export async function getLandlordApplications(landlordId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(applications).where(eq(applications.landlordId, landlordId));
+}
+
+export async function createApplication(data: InsertApplication) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.insert(applications).values(data);
+  const result = await db.select().from(applications).orderBy(applications.id).limit(1);
+  return result.length > 0 ? result[result.length - 1] : undefined;
+}
+
+export async function updateApplicationStatus(id: number, status: 'pending' | 'approve' | 'reject', notes?: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.update(applications).set({ 
+    status, 
+    notes: notes || null,
+    respondedAt: new Date(),
+    viewedAt: new Date()
+  }).where(eq(applications.id, id));
+  return getApplicationById(id);
+}
+
+// Payment Queries
+export async function createPaymentTransaction(data: InsertPaymentTransaction) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.insert(paymentTransactions).values(data);
+  const result = await db.select().from(paymentTransactions).orderBy(paymentTransactions.id).limit(1);
+  return result.length > 0 ? result[result.length - 1] : undefined;
+}
+
+export async function getUserPaymentTransactions(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(paymentTransactions).where(eq(paymentTransactions.userId, userId));
+}
+
+// Document Queries
+export async function createDocument(data: InsertDocument) {
+  const db = await getDb();
+  if (!db) return undefined;
+  await db.insert(documents).values(data);
+  const result = await db.select().from(documents).orderBy(documents.id).limit(1);
+  return result.length > 0 ? result[result.length - 1] : undefined;
+}
+
+export async function getUserDocuments(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(documents).where(eq(documents.userId, userId));
+}

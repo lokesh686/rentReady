@@ -1,0 +1,20 @@
+{
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install",
+  "framework": "other",
+  "nodeVersion": "22.x",
+  "env": {
+    "NODE_ENV": "production",
+    "DATABASE_URL": "@database_url",
+    "JWT_SECRET": "@jwt_secret",
+    "VITE_APP_ID": "@vite_app_id",
+    "OAUTH_SERVER_URL": "https://api.manus.im",
+    "VITE_OAUTH_PORTAL_URL": "https://portal.manus.im",
+    "STRIPE_SECRET_KEY": "@stripe_secret_key",
+    "STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key"
+  },
+  "buildOutputDirectory": "dist",
+  "outputDirectory": "dist",
+  "public": false
+}

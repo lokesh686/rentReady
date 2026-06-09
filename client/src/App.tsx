@@ -4,6 +4,12 @@ import NotFound from "@/pages/NotFound";
 import Home from "@/pages/Home";
 import RenterDashboard from "@/pages/RenterDashboard";
 import LandlordDashboard from "@/pages/LandlordDashboard";
+import RenterOnboarding from "@/pages/RenterOnboarding";
+import RenterProfileCard from "@/pages/RenterProfileCard";
+import BrowseListings from "@/pages/BrowseListings";
+import LandlordListings from "@/pages/LandlordListings";
+import LandlordApplications from "@/pages/LandlordApplications";
+import RenterSubscription from "@/pages/RenterSubscription";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -11,10 +17,16 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/renter/dashboard"} component={RenterDashboard} />
-      <Route path={"/landlord/dashboard"} component={LandlordDashboard} />
-      <Route path={"/404"} component={NotFound} />
+      <Route path="/" component={Home} />
+      <Route path="/renter/dashboard" component={RenterDashboard} />
+      <Route path="/renter/onboarding" component={RenterOnboarding} />
+      <Route path="/renter/profile" component={RenterProfileCard} />
+      <Route path="/renter/listings" component={BrowseListings} />
+      <Route path="/renter/subscription" component={RenterSubscription} />
+      <Route path="/landlord/dashboard" component={LandlordDashboard} />
+      <Route path="/landlord/listings" component={LandlordListings} />
+      <Route path="/landlord/applications" component={LandlordApplications} />
+      <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

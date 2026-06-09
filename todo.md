@@ -17,22 +17,22 @@
 - [x] Implement role detection and routing in frontend
 
 ## Renter Onboarding Flow
-- [ ] Create multi-step form component with progress indicator
-- [ ] Step 1: Personal information (name, email, phone, date of birth, SSN)
-- [ ] Step 2: ID upload (driver's license or passport)
-- [ ] Step 3: Income details (annual income, income source)
-- [ ] Step 4: Employment information (employer, job title, employment status)
-- [ ] Step 5: References (personal references with contact info)
+- [x] Create multi-step form component with progress indicator
+- [x] Step 1: Personal information (name, email, phone, date of birth, SSN)
+- [x] Step 2: ID upload (driver's license or passport)
+- [x] Step 3: Income details (annual income, income source)
+- [x] Step 4: Employment information (employer, job title, employment status)
+- [x] Step 5: References (personal references with contact info)
 - [ ] Implement form validation and error handling
 - [ ] Create onboarding completion status tracking
 - [ ] Add document upload with file storage integration
 
 ## Renter Profile Card
-- [ ] Create verified profile card component (shareable summary)
-- [ ] Display simulated credit score (labeled as simulated)
-- [ ] Display income verification badge
-- [ ] Display ID verification status
-- [ ] Display employment verification badge
+- [x] Create verified profile card component (shareable summary)
+- [x] Display simulated credit score (labeled as simulated)
+- [x] Display income verification badge
+- [x] Display ID verification status
+- [x] Display employment verification badge
 - [ ] Add reference count display
 - [ ] Generate shareable profile PDF
 - [ ] Create profile card sharing mechanism (URL-based)
@@ -40,18 +40,18 @@
 ## Renter Subscription Billing
 - [ ] Integrate Stripe for renter subscriptions
 - [ ] Create subscription plan ($49/year)
-- [ ] Build subscription checkout flow
-- [ ] Implement subscription status tracking (active, expired, cancelled)
-- [ ] Create subscription management page (view plan, cancel, renew)
-- [ ] Add subscription validation before allowing apply feature
+- [x] Build subscription checkout flow
+- [x] Implement subscription status tracking (active, expired, cancelled)
+- [x] Create subscription management page (view plan, cancel, renew)
+- [x] Add subscription validation before allowing apply feature
 - [ ] Create billing history view
 
 ## Landlord Portal
-- [ ] Create landlord dashboard layout
-- [ ] Build applicant packet inbox/list view
-- [ ] Create applicant detail view (full profile, documents, verification status)
-- [ ] Implement application status management (approve, reject, pending)
-- [ ] Add application notes/comments feature
+- [x] Create landlord dashboard layout
+- [x] Build applicant packet inbox/list view
+- [x] Create applicant detail view (full profile, documents, verification status)
+- [x] Implement application status management (approve, reject, pending)
+- [x] Add application notes/comments feature
 - [ ] Create landlord profile/company setup page
 - [ ] Build payment method management page
 - [ ] Create billing history and invoice view
